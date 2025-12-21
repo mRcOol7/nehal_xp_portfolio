@@ -47,6 +47,14 @@ const XPTaskbar: React.FC<XPTaskbarProps> = ({
     });
   };
 
+  const handleStartMenuToggle = () => {
+    console.log('Start menu clicked, current state:', showStartMenu);
+    console.log('Active window:', activeWindowId);
+    console.log('Open windows:', openWindows.map(w => w.id));
+    setShowStartMenu(!showStartMenu);
+    console.log('Start menu new state:', !showStartMenu);
+  };
+
   const handleContextMenu = (e: React.MouseEvent, windowId: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -114,7 +122,7 @@ const XPTaskbar: React.FC<XPTaskbarProps> = ({
       <div className="xp-taskbar fixed bottom-0 left-0 right-0 z-50">
         <button
           className="xp-start-btn"
-          onClick={() => setShowStartMenu(!showStartMenu)}
+          onClick={handleStartMenuToggle}
         >
           <img 
             src={windowsXPImage} 

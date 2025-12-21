@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Monitor, User, Briefcase, GraduationCap, Code, FolderOpen, FileText, Mail } from 'lucide-react';
+import { Monitor, User, Briefcase, GraduationCap, Code, FolderOpen, FileText, Mail, Terminal } from 'lucide-react';
 import blissWallpaper from '@/assets/bliss-wallpaper.jpg';
 import XPIcon from './XPIcon';
 import XPWindow from './XPWindow';
@@ -17,6 +17,7 @@ import ProjectsWindow from './windows/ProjectsWindow';
 import ResumeWindow from './windows/ResumeWindow';
 import ContactWindow from './windows/ContactWindow';
 import MyComputerWindow from './windows/MyComputerWindow';
+import XPTerminal from './windows/XPTerminal';
 
 
 interface WindowData {
@@ -35,11 +36,23 @@ interface ContextMenuState {
 const XPDesktop: React.FC = () => {
   const [showBootScreen, setShowBootScreen] = useState(() => {
     const hasBooted = sessionStorage.getItem('xp-booted');
-    return !hasBooted;
+    const wasShutdown = sessionStorage.getItem('xpShutdownState');
+    
+    // Show boot screen if first time OR coming from shutdown
+    if (!hasBooted || wasShutdown === 'true') {
+      return true;
+    }
+    return false;
   });
   const [showLoginScreen, setShowLoginScreen] = useState(() => {
     const hasLoggedIn = sessionStorage.getItem('xp-logged-in');
-    return !hasLoggedIn;
+    const wasShutdown = sessionStorage.getItem('xpShutdownState');
+    
+    // Show login screen if first time OR coming from shutdown
+    if (!hasLoggedIn || wasShutdown === 'true') {
+      return true;
+    }
+    return false;
   });
   const [showShutdownDialog, setShowShutdownDialog] = useState(false);
   const [showShutdownScreen, setShowShutdownScreen] = useState(false);
@@ -64,6 +77,16 @@ const XPDesktop: React.FC = () => {
   }, []);
 
   const handleBootComplete = useCallback(() => {
+    const wasShutdown = sessionStorage.getItem('xpShutdownState');
+    
+    // If coming from shutdown, clear login state to show login screen
+    if (wasShutdown === 'true') {
+      sessionStorage.removeItem('xp-logged-in');
+      // Clear shutdown state after boot completes
+      sessionStorage.removeItem('xpShutdownState');
+      sessionStorage.removeItem('xpIsRestart');
+    }
+    
     sessionStorage.setItem('xp-booted', 'true');
     setShowBootScreen(false);
   }, []);
@@ -136,6 +159,12 @@ const XPDesktop: React.FC = () => {
       title: 'Contact Me',
       icon: <Mail className="w-4 h-4" />,
       component: <ContactWindow />,
+    },
+    terminal: {
+      id: 'terminal',
+      title: 'Terminal',
+      icon: <Terminal className="w-4 h-4" />,
+      component: <XPTerminal />,
     },
   };
 

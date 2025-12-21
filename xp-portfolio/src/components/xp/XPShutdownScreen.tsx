@@ -13,6 +13,10 @@ const XPShutdownScreen: React.FC<XPShutdownScreenProps> = ({ isRestart = false, 
   useEffect(() => {
     setFadeIn(true);
     
+    // Store shutdown state in sessionStorage
+    sessionStorage.setItem('xpShutdownState', 'true');
+    sessionStorage.setItem('xpIsRestart', isRestart.toString());
+    
     // Stage transitions
     const savingTimer = setTimeout(() => {
       setStage('shuttingdown');

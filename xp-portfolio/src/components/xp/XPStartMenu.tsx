@@ -1,5 +1,5 @@
-import React from 'react';
-import { User, Briefcase, Code, FileText, Github, Linkedin, Globe, Mail, GraduationCap, Power } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { User, Briefcase, Code, FileText, Github, Linkedin, Globe, Mail, GraduationCap, Power, Terminal } from 'lucide-react';
 import passportImage from '@/assets/Passport image.jpg';
 
 interface XPStartMenuProps {
@@ -9,12 +9,23 @@ interface XPStartMenuProps {
 }
 
 const XPStartMenu: React.FC<XPStartMenuProps> = ({ onClose, onOpenWindow, onShutdown }) => {
+  console.log('XPStartMenu rendered');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openTime, setOpenTime] = useState(0);
+  
+  useEffect(() => {
+    const now = Date.now();
+    setOpenTime(now);
+    setIsMenuOpen(true);
+    console.log('Start menu opened, setting isMenuOpen to true at:', now);
+  }, []);
   const leftItems = [
     { id: 'about', label: 'About Me', icon: <User className="w-8 h-8 text-blue-600" /> },
     { id: 'experience', label: 'Experience', icon: <Briefcase className="w-8 h-8 text-amber-600" /> },
     { id: 'skills', label: 'Skills', icon: <Code className="w-8 h-8 text-green-600" /> },
     { id: 'projects', label: 'Projects', icon: <Code className="w-8 h-8 text-purple-600" /> },
     { id: 'resume', label: 'Resume', icon: <FileText className="w-8 h-8 text-red-600" /> },
+    { id: 'terminal', label: 'Terminal', icon: <Terminal className="w-8 h-8 text-gray-600" /> },
   ];
 
   const rightItems = [
@@ -30,8 +41,36 @@ const XPStartMenu: React.FC<XPStartMenuProps> = ({ onClose, onOpenWindow, onShut
 
   return (
     <>
-      <div className="fixed inset-0 z-40" onClick={onClose} />
-      <div className="xp-start-menu animate-slide-up z-50">
+      <div 
+        className="fixed inset-0 z-40" 
+        onClick={(e) => {
+          console.log('Backdrop clicked event triggered');
+          console.log('Event target:', e.target);
+          console.log('isMenuOpen:', isMenuOpen);
+          console.log('openTime:', openTime);
+          console.log('Current time:', Date.now());
+          console.log('Time since open:', Date.now() - openTime);
+          
+          // Only close if menu has been open for more than 100ms
+          if (isMenuOpen && (Date.now() - openTime) > 100) {
+            console.log('Calling onClose() - menu has been open long enough');
+            onClose();
+          } else {
+            console.log('Not closing - menu not fully opened yet or too recent');
+          }
+        }} 
+      />
+      <div 
+        className="xp-start-menu animate-slide-up z-[70]"
+        onClick={(e) => {
+          console.log('Start menu clicked, preventing event bubbling');
+          e.stopPropagation();
+        }}
+        onMouseDown={(e) => {
+          console.log('Start menu mousedown, preventing event bubbling');
+          e.stopPropagation();
+        }}
+      >
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-700 to-blue-500 px-3 py-2 flex items-center gap-3">
           <img 
