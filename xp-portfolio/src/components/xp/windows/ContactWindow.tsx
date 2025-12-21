@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Send, Github, Linkedin, Globe } from 'lucide-react';
+import { Mail, Send, Github, Linkedin, Globe, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const ContactWindow: React.FC = () => {
@@ -8,6 +8,7 @@ const ContactWindow: React.FC = () => {
     email: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,6 +16,8 @@ const ContactWindow: React.FC = () => {
       toast.error('Please fill in all fields');
       return;
     }
+    
+    setIsSubmitting(true);
     
     try {
       // Send message to API endpoint
@@ -37,6 +40,8 @@ const ContactWindow: React.FC = () => {
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -102,9 +107,22 @@ const ContactWindow: React.FC = () => {
           />
         </div>
 
-        <button type="submit" className="xp-button flex items-center gap-2">
-          <Send className="w-4 h-4" />
-          <span>Send Message</span>
+        <button 
+          type="submit" 
+          className="xp-button flex items-center gap-2"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Sending...</span>
+            </>
+          ) : (
+            <>
+              <Send className="w-4 h-4" />
+              <span>Send Message</span>
+            </>
+          )}
         </button>
       </form>
 
