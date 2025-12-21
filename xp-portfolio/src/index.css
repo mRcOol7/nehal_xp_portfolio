@@ -1,0 +1,440 @@
+@import url('https://fonts.googleapis.com/css2?family=Tahoma:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Windows XP Color Palette */
+    --background: 203 92% 75%;
+    --foreground: 0 0% 0%;
+
+    /* XP Blues */
+    --xp-blue-dark: 216 100% 45%;
+    --xp-blue-light: 207 74% 51%;
+    --xp-blue-title: 216 100% 44%;
+    --xp-taskbar: 216 75% 50%;
+    --xp-taskbar-light: 210 62% 60%;
+
+    /* XP Greens */
+    --xp-green-dark: 120 44% 42%;
+    --xp-green-light: 115 46% 54%;
+
+    /* XP Grays */
+    --xp-window-bg: 45 27% 92%;
+    --xp-window-border: 0 0% 52%;
+    --xp-window-border-light: 0 0% 87%;
+    --xp-button-face: 40 20% 88%;
+    --xp-button-highlight: 0 0% 100%;
+    --xp-button-shadow: 0 0% 64%;
+
+    /* Shadcn defaults mapped to XP */
+    --card: 45 27% 92%;
+    --card-foreground: 0 0% 0%;
+    --popover: 45 27% 92%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 216 100% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 27% 92%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 45 15% 85%;
+    --muted-foreground: 0 0% 30%;
+    --accent: 216 75% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 75%;
+    --input: 0 0% 75%;
+    --ring: 216 100% 45%;
+    --radius: 0px;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* XP Gradients */
+    --xp-title-gradient: linear-gradient(180deg, 
+      hsl(216, 100%, 55%) 0%, 
+      hsl(216, 100%, 45%) 8%, 
+      hsl(216, 100%, 35%) 40%, 
+      hsl(216, 100%, 42%) 88%, 
+      hsl(216, 100%, 55%) 93%, 
+      hsl(216, 100%, 48%) 95%, 
+      hsl(216, 100%, 35%) 100%
+    );
+    
+    --xp-taskbar-gradient: linear-gradient(180deg,
+      hsl(216, 80%, 55%) 0%,
+      hsl(216, 75%, 45%) 3%,
+      hsl(216, 70%, 38%) 6%,
+      hsl(216, 65%, 35%) 10%,
+      hsl(216, 60%, 32%) 14%,
+      hsl(216, 55%, 30%) 20%,
+      hsl(216, 50%, 28%) 24%,
+      hsl(216, 48%, 27%) 56%,
+      hsl(216, 50%, 28%) 66%,
+      hsl(216, 55%, 30%) 76%,
+      hsl(216, 60%, 32%) 86%,
+      hsl(216, 65%, 35%) 92%,
+      hsl(216, 70%, 40%) 98%,
+      hsl(216, 75%, 45%) 100%
+    );
+
+    --xp-start-gradient: linear-gradient(180deg,
+      hsl(120, 55%, 50%) 0%,
+      hsl(120, 50%, 45%) 3%,
+      hsl(120, 45%, 38%) 6%,
+      hsl(120, 42%, 35%) 50%,
+      hsl(120, 45%, 38%) 94%,
+      hsl(120, 50%, 45%) 97%,
+      hsl(120, 55%, 50%) 100%
+    );
+
+    --xp-button-gradient: linear-gradient(180deg,
+      hsl(0, 0%, 100%) 0%,
+      hsl(40, 20%, 95%) 45%,
+      hsl(40, 20%, 85%) 50%,
+      hsl(40, 15%, 80%) 100%
+    );
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Tahoma', 'Segoe UI', sans-serif;
+  }
+}
+
+@layer components {
+  /* XP Window Styles */
+  .xp-window {
+    @apply rounded-t-lg overflow-hidden;
+    box-shadow: 
+      2px 2px 10px rgba(0, 0, 0, 0.3),
+      inset 1px 1px 0 rgba(255, 255, 255, 0.4),
+      inset -1px -1px 0 rgba(0, 0, 0, 0.2);
+    border: 3px solid hsl(var(--xp-blue-dark));
+  }
+
+  .xp-title-bar {
+    background: var(--xp-title-gradient);
+    @apply h-8 flex items-center justify-between px-1 cursor-move select-none;
+    border-bottom: 1px solid hsl(var(--xp-blue-dark));
+  }
+
+  .xp-title-text {
+    @apply text-white text-sm font-bold ml-1 drop-shadow-sm flex items-center gap-2;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+  }
+
+  .xp-window-content {
+    @apply bg-[hsl(var(--xp-window-bg))] p-4;
+    border: 2px solid;
+    border-color: hsl(var(--xp-window-border-light)) hsl(var(--xp-window-border)) hsl(var(--xp-window-border)) hsl(var(--xp-window-border-light));
+  }
+
+  /* XP Button Styles */
+  .xp-button {
+    background: var(--xp-button-gradient);
+    @apply px-4 py-1 text-sm rounded-sm;
+    border: 2px solid;
+    border-color: hsl(var(--xp-button-highlight)) hsl(var(--xp-button-shadow)) hsl(var(--xp-button-shadow)) hsl(var(--xp-button-highlight));
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .xp-button:hover {
+    background: linear-gradient(180deg,
+      hsl(40, 30%, 98%) 0%,
+      hsl(40, 25%, 92%) 45%,
+      hsl(40, 22%, 88%) 50%,
+      hsl(40, 18%, 85%) 100%
+    );
+  }
+
+  .xp-button:active {
+    border-color: hsl(var(--xp-button-shadow)) hsl(var(--xp-button-highlight)) hsl(var(--xp-button-highlight)) hsl(var(--xp-button-shadow));
+    background: linear-gradient(180deg,
+      hsl(40, 15%, 82%) 0%,
+      hsl(40, 18%, 86%) 50%,
+      hsl(40, 20%, 90%) 100%
+    );
+  }
+
+  /* Window Control Buttons */
+  .xp-control-btn {
+    @apply w-5 h-5 rounded-sm flex items-center justify-center text-xs font-bold;
+    background: var(--xp-button-gradient);
+    border: 1px solid;
+    border-color: hsl(var(--xp-button-highlight)) hsl(var(--xp-button-shadow)) hsl(var(--xp-button-shadow)) hsl(var(--xp-button-highlight));
+  }
+
+  .xp-control-btn:hover {
+    background: linear-gradient(180deg, hsl(40, 30%, 98%) 0%, hsl(40, 22%, 88%) 100%);
+  }
+
+  .xp-close-btn {
+    @apply bg-gradient-to-b from-red-400 to-red-600 text-white;
+    border-color: hsl(0, 60%, 70%) hsl(0, 60%, 35%) hsl(0, 60%, 35%) hsl(0, 60%, 70%);
+  }
+
+  .xp-close-btn:hover {
+    @apply from-red-300 to-red-500;
+  }
+
+  /* Desktop Icon Styles */
+  .xp-icon {
+    @apply flex flex-col items-center gap-1 p-2 rounded cursor-pointer select-none;
+    transition: all 0.1s ease;
+  }
+
+  .xp-icon:hover {
+    @apply bg-blue-500/30;
+    box-shadow: inset 0 0 0 1px rgba(100, 150, 255, 0.5);
+  }
+
+  .xp-icon-selected {
+    @apply bg-blue-600/40;
+    box-shadow: inset 0 0 0 1px rgba(50, 100, 255, 0.7);
+  }
+
+  .xp-icon-text {
+    @apply text-white text-xs text-center max-w-16 leading-tight;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8), -1px -1px 2px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Taskbar Styles */
+  .xp-taskbar {
+    background: var(--xp-taskbar-gradient);
+    @apply h-10 flex items-center px-1;
+    border-top: 2px solid hsl(var(--xp-blue-light));
+  }
+
+  .xp-start-btn {
+    background: var(--xp-start-gradient);
+    @apply h-8 px-3 rounded-r-xl flex items-center gap-1 text-white font-bold text-sm;
+    border: 1px solid;
+    border-color: hsl(120, 50%, 55%) hsl(120, 45%, 25%) hsl(120, 45%, 25%) hsl(120, 50%, 55%);
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .xp-start-btn:hover {
+    filter: brightness(1.1);
+  }
+
+  .xp-taskbar-btn {
+    background: linear-gradient(180deg,
+      hsl(216, 60%, 50%) 0%,
+      hsl(216, 55%, 40%) 50%,
+      hsl(216, 50%, 35%) 100%
+    );
+    @apply h-7 px-3 mx-0.5 text-white text-xs rounded-sm flex items-center gap-1 max-w-40 truncate;
+    border: 1px solid;
+    border-color: hsl(216, 60%, 60%) hsl(216, 50%, 25%) hsl(216, 50%, 25%) hsl(216, 60%, 60%);
+  }
+
+  .xp-taskbar-btn:hover {
+    filter: brightness(1.1);
+  }
+
+  .xp-taskbar-btn.active {
+    background: linear-gradient(180deg,
+      hsl(216, 40%, 30%) 0%,
+      hsl(216, 45%, 40%) 50%,
+      hsl(216, 50%, 45%) 100%
+    );
+    border-color: hsl(216, 50%, 25%) hsl(216, 60%, 60%) hsl(216, 60%, 60%) hsl(216, 50%, 25%);
+  }
+
+  /* Start Menu */
+  .xp-start-menu {
+    @apply absolute bottom-10 left-0 w-96 rounded-t-lg overflow-hidden;
+    background: linear-gradient(180deg, hsl(216, 100%, 50%) 0%, hsl(216, 90%, 45%) 100%);
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+    border: 2px solid hsl(216, 100%, 55%);
+  }
+
+  .xp-start-menu-content {
+    @apply bg-white flex;
+  }
+
+  .xp-start-menu-left {
+    @apply w-1/2 py-2 bg-white;
+  }
+
+  .xp-start-menu-right {
+    @apply w-1/2 py-2;
+    background: linear-gradient(180deg, hsl(207, 70%, 88%) 0%, hsl(207, 60%, 82%) 100%);
+  }
+
+  .xp-menu-item {
+    @apply flex items-center gap-3 px-3 py-2 cursor-pointer text-sm;
+  }
+
+  .xp-menu-item:hover {
+    @apply bg-blue-600 text-white;
+  }
+
+  /* Input Styles */
+  .xp-input {
+    @apply w-full px-2 py-1 text-sm;
+    background: white;
+    border: 2px solid;
+    border-color: hsl(var(--xp-button-shadow)) hsl(var(--xp-button-highlight)) hsl(var(--xp-button-highlight)) hsl(var(--xp-button-shadow));
+  }
+
+  .xp-input:focus {
+    @apply outline-none;
+    border-color: hsl(var(--xp-blue-dark));
+  }
+
+  /* Clock Styles */
+  .xp-clock {
+    @apply text-white text-xs px-2 py-1 h-full flex items-center;
+    background: linear-gradient(180deg,
+      hsl(216, 50%, 40%) 0%,
+      hsl(216, 45%, 35%) 50%,
+      hsl(216, 40%, 32%) 100%
+    );
+    border-left: 1px solid hsl(216, 50%, 50%);
+  }
+
+  /* Animations */
+  @keyframes boot-fade {
+    0% {
+      opacity: 0;
+      transform: scale(1.02);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes loading-blocks {
+    0% {
+      transform: translateX(-50%);
+    }
+    100% {
+      transform: translateX(0%);
+    }
+  }
+
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+    }
+    50% {
+      opacity: 0.9;
+      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+    }
+  }
+
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-boot {
+    animation: boot-fade 1s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.2s ease-out forwards;
+  }
+
+  .animate-loading-blocks {
+    animation: loading-blocks 1.5s linear infinite;
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s ease-in-out infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out forwards;
+  }
+
+  @keyframes loading-bar {
+    0% {
+      transform: translateX(-100%);
+      width: 30%;
+    }
+    50% {
+      width: 60%;
+    }
+    100% {
+      transform: translateX(400%);
+      width: 30%;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-loading-bar {
+    animation: loading-bar 1s ease-in-out infinite;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+
+  /* Scrollbar XP Style */
+  .xp-scrollbar::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  .xp-scrollbar::-webkit-scrollbar-track {
+    background: hsl(40, 20%, 92%);
+    border: 1px solid hsl(0, 0%, 75%);
+  }
+
+  .xp-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--xp-button-gradient);
+    border: 1px solid;
+    border-color: hsl(var(--xp-button-highlight)) hsl(var(--xp-button-shadow)) hsl(var(--xp-button-shadow)) hsl(var(--xp-button-highlight));
+  }
+}
