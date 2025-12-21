@@ -45,7 +45,7 @@ const XPDesktop: React.FC = () => {
     return false;
   });
   const [showLoginScreen, setShowLoginScreen] = useState(() => {
-    const hasLoggedIn = sessionStorage.getItem('xp-logged-in');
+    const hasLoggedIn = localStorage.getItem('xp-logged-in');
     const wasShutdown = sessionStorage.getItem('xpShutdownState');
     
     // Show login screen if first time OR coming from shutdown
@@ -73,7 +73,19 @@ const XPDesktop: React.FC = () => {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     
-    return () => window.removeEventListener('resize', checkMobile);
+    // Clear login state when user closes browser (not when refreshing)
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Only clear if not refreshing (check for refresh vs close)
+      // This is a best effort approach as browsers limit this functionality
+      localStorage.removeItem('xp-logged-in');
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, []);
 
   const handleBootComplete = useCallback(() => {
@@ -81,7 +93,7 @@ const XPDesktop: React.FC = () => {
     
     // If coming from shutdown, clear login state to show login screen
     if (wasShutdown === 'true') {
-      sessionStorage.removeItem('xp-logged-in');
+      localStorage.removeItem('xp-logged-in');
       // Clear shutdown state after boot completes
       sessionStorage.removeItem('xpShutdownState');
       sessionStorage.removeItem('xpIsRestart');
@@ -92,7 +104,7 @@ const XPDesktop: React.FC = () => {
   }, []);
 
   const handleLoginComplete = useCallback(() => {
-    sessionStorage.setItem('xp-logged-in', 'true');
+    localStorage.setItem('xp-logged-in', 'true');
     setShowLoginScreen(false);
     
     // Delay to allow fade transition

@@ -37,7 +37,6 @@ const XPLoginScreen: React.FC<XPLoginScreenProps> = ({ onLogin }) => {
 
   const users: UserProfile[] = [
     { id: 'nehal', name: 'Nehal Chauhan', avatar: passportImage, hasPassword: false },
-    { id: 'guest', name: 'Guest', hasPassword: false },
   ];
 
   useEffect(() => {
