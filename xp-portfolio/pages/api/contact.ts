@@ -3,15 +3,24 @@ import mysql from 'mysql2/promise';
 
 // Database configuration
 const dbConfig = {
-  host: process.env.HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
-  port: parseInt(process.env.PORT || '4000'),
-  user: process.env.USERNAME || '3G3bRSf18G8aTXC.root',
-  password: process.env.PASSWORD || 'h4Uru0Q7Oeb2we8G',
-  database: process.env.DATABASE || 'portfolio_db',
+  host: process.env.TIDB_HOST,
+  port: parseInt(process.env.TIDB_PORT || '4000'),
+  user: process.env.TIDB_USER,
+  password: process.env.TIDB_PASSWORD,
+  database: process.env.TIDB_DATABASE,
   ssl: {
     rejectUnauthorized: false
   }
 };
+
+// Validate required environment variables
+const requiredEnvVars = ['TIDB_HOST', 'TIDB_PORT', 'TIDB_USER', 'TIDB_PASSWORD', 'TIDB_DATABASE'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('Missing required environment variables:', missingVars.join(', '));
+  process.exit(1);
+}
 
 // Create connection pool
 const pool = mysql.createPool(dbConfig);
@@ -33,9 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const connection = await pool.getConnection();
     console.log('Connected to TiDB successfully');
 
-    // Create database and table if they don't exist
-    await connection.execute(`CREATE DATABASE IF NOT EXISTS portfolio_db`);
-    await connection.execute(`USE portfolio_db`);
+    // Create table if it doesn't exist
     await connection.execute(`
       CREATE TABLE IF NOT EXISTS contact_messages (
         id INT AUTO_INCREMENT PRIMARY KEY,

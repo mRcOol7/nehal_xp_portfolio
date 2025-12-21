@@ -18,7 +18,7 @@ const ContactWindow: React.FC = () => {
     
     try {
       // Send message to API endpoint
-      const response = await fetch('http://localhost:3001/api/contact', {
+      const response = await fetch('https://nehal-xp-porfolio-backend.vercel.app/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -15,15 +15,24 @@ app.use(express.json());
 
 // Database configuration
 const dbConfig = {
-  host: process.env.TIDB_HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
-  port: parseInt(process.env.TIDB_PORT || '4000'),
-  user: process.env.TIDB_USER || '3G3bRSf18G8aTXC.root',
-  password: process.env.TIDB_PASSWORD || 'h4Uru0Q7Oeb2we8G',
-  database: process.env.TIDB_DATABASE || 'test',
+  host: process.env.TIDB_HOST,
+  port: parseInt(process.env.TIDB_PORT),
+  user: process.env.TIDB_USER,
+  password: process.env.TIDB_PASSWORD,
+  database: process.env.TIDB_DATABASE,
   ssl: {
     rejectUnauthorized: false
   }
 };
+
+// Validate required environment variables
+const requiredEnvVars = ['TIDB_HOST', 'TIDB_PORT', 'TIDB_USER', 'TIDB_PASSWORD', 'TIDB_DATABASE'];
+const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+
+if (missingVars.length > 0) {
+  console.error('Missing required environment variables:', missingVars.join(', '));
+  process.exit(1);
+}
 
 // Create connection pool
 const pool = mysql.createPool(dbConfig);
@@ -35,8 +44,8 @@ async function initializeDatabase() {
     const connection = await pool.getConnection();
     console.log('Connected to TiDB successfully');
 
-    // Use the existing database (test)
-    await connection.execute(`USE ${process.env.TIDB_DATABASE || 'test'}`);
+    // Use the specified database
+    await connection.execute(`USE ${process.env.TIDB_DATABASE}`);
     
     // Create contact_messages table if it doesn't exist
     await connection.execute(`
@@ -53,6 +62,7 @@ async function initializeDatabase() {
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Database initialization failed:', error);
+    process.exit(1);
   }
 }
 
@@ -68,9 +78,6 @@ app.post('/api/contact', async (req, res) => {
 
     console.log('Saving message to database...');
     const connection = await pool.getConnection();
-    
-    // Use the existing database (test)
-    await connection.execute(`USE ${process.env.TIDB_DATABASE || 'test'}`);
     
     const [result] = await connection.execute(
       'INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)',
@@ -96,7 +103,11 @@ app.post('/api/contact', async (req, res) => {
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'Server is running', 
+    timestamp: new Date().toISOString(),
+    dbStatus: 'Connected'
+  });
 });
 
 // Start server
