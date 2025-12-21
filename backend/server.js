@@ -17,9 +17,9 @@ app.use(express.json());
 const dbConfig = {
   host: process.env.TIDB_HOST || 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
   port: parseInt(process.env.TIDB_PORT || '4000'),
-  user: process.env.TIDB_USER || '29HSGhrmGdneSaw.root',
-  password: process.env.TIDB_PASSWORD || 'FiWbMPM7T45AwnTF',
-  database: process.env.TIDB_DATABASE || 'esg',
+  user: process.env.TIDB_USER || '3G3bRSf18G8aTXC.root',
+  password: process.env.TIDB_PASSWORD || 'h4Uru0Q7Oeb2we8G',
+  database: process.env.TIDB_DATABASE || 'test',
   ssl: {
     rejectUnauthorized: false
   }
@@ -35,8 +35,8 @@ async function initializeDatabase() {
     const connection = await pool.getConnection();
     console.log('Connected to TiDB successfully');
 
-    // Use the existing database (esg)
-    await connection.execute(`USE ${process.env.TIDB_DATABASE || 'esg'}`);
+    // Use the existing database (test)
+    await connection.execute(`USE ${process.env.TIDB_DATABASE || 'test'}`);
     
     // Create contact_messages table if it doesn't exist
     await connection.execute(`
@@ -69,8 +69,8 @@ app.post('/api/contact', async (req, res) => {
     console.log('Saving message to database...');
     const connection = await pool.getConnection();
     
-    // Use the existing database (esg)
-    await connection.execute(`USE ${process.env.TIDB_DATABASE || 'esg'}`);
+    // Use the existing database (test)
+    await connection.execute(`USE ${process.env.TIDB_DATABASE || 'test'}`);
     
     const [result] = await connection.execute(
       'INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)',
