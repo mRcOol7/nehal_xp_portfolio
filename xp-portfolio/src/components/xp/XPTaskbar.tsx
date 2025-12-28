@@ -39,6 +39,27 @@ const XPTaskbar: React.FC<XPTaskbarProps> = ({
     return () => clearInterval(timer);
   }, []);
 
+  // Close start menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const startMenu = document.querySelector('.xp-start-menu');
+      const startButton = document.querySelector('.xp-start-btn');
+      
+      if (
+        showStartMenu &&
+        startMenu &&
+        !startMenu.contains(target) &&
+        !startButton?.contains(target)
+      ) {
+        setShowStartMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showStartMenu]);
+
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
       hour: 'numeric',
@@ -108,6 +129,7 @@ const XPTaskbar: React.FC<XPTaskbarProps> = ({
     <>
       {showStartMenu && (
         <XPStartMenu
+          className="xp-start-menu"
           onClose={() => setShowStartMenu(false)}
           onOpenWindow={(id) => {
             onOpenWindow(id);

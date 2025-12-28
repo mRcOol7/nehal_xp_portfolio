@@ -67,6 +67,17 @@ const XPDesktop: React.FC = () => {
   const [contextMenu, setContextMenu] = useState<ContextMenuState>({ show: false, x: 0, y: 0 });
   
   const [iconsAnimated, setIconsAnimated] = useState(false);
+  
+  // Marquee selection state
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectionBox, setSelectionBox] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
+  const [selectedIcons, setSelectedIcons] = useState<string[]>([]);
+  const selectionStart = React.useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -240,12 +251,93 @@ const XPDesktop: React.FC = () => {
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
+    // Don't show context menu if we're in the middle of a selection
+    if (isSelecting) {
+      e.preventDefault();
+      return;
+    }
+    
     e.preventDefault();
     setContextMenu({
       show: true,
       x: e.clientX,
       y: e.clientY,
     });
+  };
+
+  // Marquee selection handlers
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // Only desktop background, allow both left (0) and right (2) clicks
+    if ((e.button !== 0 && e.button !== 2) || (e.target as HTMLElement).closest('[data-icon]')) return;
+
+    // Prevent context menu on right click
+    if (e.button === 2) {
+      e.preventDefault();
+    }
+
+    selectionStart.current = { x: e.clientX, y: e.clientY };
+    setSelectionBox({ x: e.clientX, y: e.clientY, width: 0, height: 0 });
+    setIsSelecting(true);
+    setSelectedIcons([]);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isSelecting) return;
+
+    const startX = selectionStart.current.x;
+    const startY = selectionStart.current.y;
+
+    setSelectionBox({
+      x: Math.min(startX, e.clientX),
+      y: Math.min(startY, e.clientY),
+      width: Math.abs(e.clientX - startX),
+      height: Math.abs(e.clientY - startY),
+    });
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!isSelecting) return;
+
+    // Prevent context menu if this was a right-click selection
+    if (e.button === 2) {
+      e.preventDefault();
+    }
+
+    const box = document.getElementById('marquee-box');
+    if (!box) return;
+
+    const boxRect = box.getBoundingClientRect();
+    const icons = document.querySelectorAll('[data-icon]');
+    const selected: string[] = [];
+
+    // Only update selection if we've dragged a reasonable distance
+    const minDragDistance = 5;
+    const hasDragged = 
+      Math.abs(selectionStart.current.x - e.clientX) > minDragDistance ||
+      Math.abs(selectionStart.current.y - e.clientY) > minDragDistance;
+
+    if (hasDragged) {
+      icons.forEach((icon) => {
+        const rect = icon.getBoundingClientRect();
+        const overlap =
+          rect.left < boxRect.right &&
+          rect.right > boxRect.left &&
+          rect.top < boxRect.bottom &&
+          rect.bottom > boxRect.top;
+
+        if (overlap) {
+          const id = icon.getAttribute('data-id');
+          if (id) selected.push(id);
+        }
+      });
+
+      setSelectedIcons(selected);
+    } else if (e.button === 0) {
+      // If it was just a click (not drag), clear selection
+      setSelectedIcons([]);
+    }
+
+    setIsSelecting(false);
   };
 
   const handleRefresh = () => {
@@ -333,6 +425,10 @@ const XPDesktop: React.FC = () => {
         backgroundPosition: 'center',
       }}
       onContextMenu={handleContextMenu}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => setIsSelecting(false)}
     >
       {/* Desktop Icons */}
       <div 
@@ -342,14 +438,9 @@ const XPDesktop: React.FC = () => {
         {desktopIcons.map((icon, index) => (
           <div
             key={icon.id}
-            className={`transition-all duration-300 ${
-              iconsAnimated 
-                ? 'opacity-100 translate-y-0' 
-                : 'opacity-0 translate-y-4'
-            }`}
-            style={{ 
-              transitionDelay: iconsAnimated ? `${index * 80}ms` : '0ms'
-            }}
+            data-icon
+            data-id={icon.id}
+            className={`${selectedIcons.includes(icon.id) ? 'ring-2 ring-blue-500 bg-blue-500/20' : ''}`}
           >
             <XPIcon
               icon={icon.icon}
@@ -423,6 +514,24 @@ const XPDesktop: React.FC = () => {
           onWindowRestore={focusWindow}
         />
       </div>
+
+      {/* Marquee selection box */}
+      {isSelecting && (
+        <div
+          id="marquee-box"
+          style={{
+            position: 'fixed',
+            left: selectionBox.x,
+            top: selectionBox.y,
+            width: selectionBox.width,
+            height: selectionBox.height,
+            background: 'rgba(0, 120, 215, 0.2)',
+            border: '1px dashed #0078d7',
+            pointerEvents: 'none',
+            zIndex: 9999,
+          }}
+        />
+      )}
     </div>
   );
 };

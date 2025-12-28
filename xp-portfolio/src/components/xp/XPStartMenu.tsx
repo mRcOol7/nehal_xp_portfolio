@@ -6,9 +6,10 @@ interface XPStartMenuProps {
   onClose: () => void;
   onOpenWindow: (id: string) => void;
   onShutdown?: () => void;
+  className?: string;
 }
 
-const XPStartMenu: React.FC<XPStartMenuProps> = ({ onClose, onOpenWindow, onShutdown }) => {
+const XPStartMenu: React.FC<XPStartMenuProps> = ({ onClose, onOpenWindow, onShutdown, className = '' }) => {
   console.log('XPStartMenu rendered');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openTime, setOpenTime] = useState(0);
