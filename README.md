@@ -40,7 +40,7 @@ This project brings the beloved Windows XP operating system to life as a modern 
 Clone the repository and install dependencies:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/mRcOol7/nehal_xp_portfolio.git
 cd windows-xp-portfolio
 npm install
 ```
